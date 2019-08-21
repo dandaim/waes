@@ -29,7 +29,11 @@ targetCompatibility = 1.8
 mainClassName = 'com.daim.assignment.Application'
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
+    compile "org.springframework.boot:spring-boot-starter-web"
+    compile "org.springframework.boot:spring-boot-starter-data-jpa"
+    compile 'commons-io:commons-io:2.6'
+
+    runtime 'com.h2database:h2:1.4.199'
 
     testCompile("junit:junit")
     testCompile("org.springframework.boot:spring-boot-starter-test")

@@ -1,24 +1,67 @@
 package com.daim.assignment.v1.controllers;
 
+import com.daim.assignment.domain.Diff;
+import com.daim.assignment.services.DiffService;
+import com.daim.assignment.services.exceptions.DiffNotFoundException;
+import com.daim.assignment.v1.controllers.models.DiffRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
+@RequestMapping(path = "/v1/diff")
 public class DiffController {
 
-    public ResponseEntity<?> putLeft() {
+    private final DiffService diffService;
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public DiffController(DiffService diffService) {
+        this.diffService = diffService;
     }
 
-    public ResponseEntity<?> putRight() {
+    @RequestMapping(method = RequestMethod.PUT, path = "/{id}/left")
+    public ResponseEntity<?> putLeft(@PathVariable("id") Long id, @RequestBody DiffRequest diffRequest) {
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        Diff diff = new Diff(id, diffRequest.getData(), null);
+
+        boolean created = diffService.saveDiff(diff);
+
+        HttpStatus responseStatus = HttpStatus.NO_CONTENT;
+
+        if (created) {
+            responseStatus = HttpStatus.CREATED;
+        }
+
+        return new ResponseEntity<>(responseStatus);
     }
 
-    public ResponseEntity<?> getDiff(Long diffId) {
+    @RequestMapping(method = RequestMethod.PUT, path = "/{id}/right")
+    public ResponseEntity<?> putRight(@PathVariable("id") Long id, @RequestBody DiffRequest diffRequest) {
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        Diff diff = new Diff(id, null, diffRequest.getData());
+
+        boolean created = diffService.saveDiff(diff);
+
+        HttpStatus responseStatus = HttpStatus.NO_CONTENT;
+
+        if (created) {
+            responseStatus = HttpStatus.CREATED;
+        }
+
+        return new ResponseEntity<>(responseStatus);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/{id}")
+    public ResponseEntity<?> getDiff(@PathVariable Long diffId) {
+
+        try {
+            Diff diff = diffService.getDiff(diffId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (DiffNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
