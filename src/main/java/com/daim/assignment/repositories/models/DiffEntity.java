@@ -2,6 +2,7 @@ package com.daim.assignment.repositories.models;
 
 import com.daim.assignment.domain.Diff;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.Objects;
@@ -12,8 +13,10 @@ public class DiffEntity {
     @Id
     private Long id;
 
+    @Column(columnDefinition = "TEXT")
     private String left;
 
+    @Column(columnDefinition = "TEXT")
     private String right;
 
     public DiffEntity() {

@@ -1,7 +1,9 @@
 package com.daim.assignment.v1.controllers;
 
 import com.daim.assignment.repositories.DiffRepository;
+import com.daim.assignment.repositories.models.DiffEntity;
 import com.daim.assignment.v1.controllers.models.DiffRequest;
+import com.daim.assignment.v1.controllers.models.DiffResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,5 +66,20 @@ public class DiffControllerIntegrationTest {
         ResponseEntity response = template.exchange(putLeftUrl, HttpMethod.PUT, request, String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    }
+
+    @Test
+    public void returnNotFoundWhenGettingNot() {
+
+        DiffEntity diffEntity = new DiffEntity(555L, "QQ==", "QQ==");
+
+        this.diffRepository.save(diffEntity);
+
+        String getDiffUrl = String.format("%s/%s", this.base.toString(), "555");
+
+        ResponseEntity<DiffResponse> response = template.getForEntity(getDiffUrl, DiffResponse.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getDiff()).isEqualTo("Left and Right data are equal");
     }
 }

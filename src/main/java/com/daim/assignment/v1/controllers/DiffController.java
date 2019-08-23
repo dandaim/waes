@@ -4,6 +4,7 @@ import com.daim.assignment.domain.Diff;
 import com.daim.assignment.services.DiffService;
 import com.daim.assignment.services.exceptions.DiffNotFoundException;
 import com.daim.assignment.v1.controllers.models.DiffRequest;
+import com.daim.assignment.v1.controllers.models.DiffResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,11 +56,13 @@ public class DiffController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/{id}")
-    public ResponseEntity<?> getDiff(@PathVariable Long diffId) {
+    public ResponseEntity<DiffResponse> getDiff(@PathVariable("id") Long diffId) {
 
         try {
             Diff diff = diffService.getDiff(diffId);
-            return new ResponseEntity<>(HttpStatus.OK);
+            DiffResponse diffResponse = new DiffResponse(diff);
+
+            return new ResponseEntity<>(diffResponse, HttpStatus.OK);
         } catch (DiffNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

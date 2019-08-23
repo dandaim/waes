@@ -4,6 +4,7 @@ import com.daim.assignment.domain.Diff;
 import com.daim.assignment.services.DiffService;
 import com.daim.assignment.services.exceptions.DiffNotFoundException;
 import com.daim.assignment.v1.controllers.models.DiffRequest;
+import com.daim.assignment.v1.controllers.models.DiffResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -120,11 +121,17 @@ public class DiffControllerTest {
 
         Long diffId = 1L;
 
-        ResponseEntity<?> response = diffController.getDiff(diffId);
+        Diff diff = mock(Diff.class);
+
+        when(diff.compareLeftAndRight()).thenReturn("It should return a difference string");
+        when(diffService.getDiff(diffId)).thenReturn(diff);
+
+        ResponseEntity<DiffResponse> response = diffController.getDiff(diffId);
 
         verify(diffService).getDiff(diffId);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getDiff()).isEqualTo("It should return a difference string");
     }
 
     @Test
@@ -138,5 +145,4 @@ public class DiffControllerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
-
 }
